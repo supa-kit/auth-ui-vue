@@ -237,7 +237,7 @@ const redirectTo = computed(() => {
 
 ### Anonymous Sign-ins
 
-The Auth component is currently support [Anonymous user login](https://supabase.com/docs/guides/auth/auth-anonymous#sign-in-anonymously).
+The Auth component currently supports [Anonymous user login](https://supabase.com/docs/guides/auth/auth-anonymous#sign-in-anonymously).
 For this you need to create an anonymous user
 
 ```js
