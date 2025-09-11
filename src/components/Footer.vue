@@ -18,7 +18,7 @@
           <carbon:logo-twitter class="text-blue-300" />
           <span>
             <a
-              href="https://twitter.com/xiaoluoboding"
+              href="https://twitter.com/robert_shaw_x"
               class="text-neon"
               target="_blank"
             >
