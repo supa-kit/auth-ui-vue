@@ -77,6 +77,11 @@ export interface AuthProps extends BaseAuth {
     variables?: AuthI18nVariables
   }
   anonymouslyCredentials?: SignInAnonymouslyCredentials
+  /**
+   * A function that will be called before the authentication is submitted.
+   * If the function returns `false`, the submission will be aborted.
+   */
+  beforeSubmit?: (email: string) => Promise<boolean | void> | boolean | void
 }
 
 export type AuthProvider =

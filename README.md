@@ -37,6 +37,7 @@ Customizable authentication UI component with custom themes and extensible style
     - [Options](#options)
     - [Supported Views](#supported-views)
     - [Anonymous Sign-ins](#anonymous-sign-ins)
+    - [Events and Callbacks](#events-and-callbacks)
   - [Customization](#customization)
     - [Predefined themes](#predefined-themes)
     - [Switch theme variations](#switch-theme-variations)
@@ -247,7 +248,42 @@ const { data, error } = await supabase.auth.signInAnonymously()
 [Enable manual linking](https://supabase.com/dashboard/project/_/settings/auth) in supabase
 
 Currently works for magic link and social login.
-If you use password login, you need user to update password after he
+If you use password login, you need user to update password after he sign in.
+
+### Events and Callbacks
+
+Control the authentication flow with the `beforeSubmit` callback and `on-submit` event.
+
+-   `beforeSubmit`: A function that runs before form submission. Return `false` to abort.
+-   `on-submit`: An event emitted with the user's email after submission.
+
+```html
+<template>
+  ...
+  <Auth
+    :supabaseClient="supabaseClient"
+    :before-submit="handleBeforeSubmit"
+    @on-submit="handleSubmit"
+  />
+  ...
+</template>
+
+<script setup lang="ts">
+  import { Auth } from '@supa-kit/auth-ui-vue'
+  
+  const handleBeforeSubmit = async (email: string) => {
+    if (email.endsWith('@example.com')) {
+      alert('Emails from @example.com are not allowed.')
+      return false // This will stop the submission
+    }
+    return true
+  }
+
+  const handleSubmit = (email: string) => {
+    console.log('Form submitted with email:', email)
+  }
+</script>
+```
 
 ## Customization
 

@@ -83,7 +83,14 @@ export interface MagicLinkProps {
   redirectTo?: RedirectTo
   showLinks?: boolean
   i18n?: AuthI18nVariables
+  /**
+   * A function that will be called before the magic link is sent.
+   * If the function returns `false`, the submission will be aborted.
+   */
+  beforeSubmit?: (email: string) => Promise<boolean | void> | boolean | void
 }
+
+const emit = defineEmits(['on-submit'])
 
 const props = withDefaults(defineProps<MagicLinkProps>(), {})
 
@@ -101,12 +108,20 @@ const labels = computed(
 )
 
 const handleSubmit = async (e: Event) => {
+  if (props.beforeSubmit) {
+    const canSubmit = await props.beforeSubmit(email.value)
+    if (canSubmit === false) {
+      return
+    }
+  }
+
   // console.log(props)
   error.value = ''
   message.value = ''
   isLoading.value = true
   const isAnonymous = supabaseUser.value?.is_anonymous
   let signInError: Error | null = null
+  emit('on-submit', email.value)
   if (isAnonymous) {
     const { error: err } = await props.supabaseClient.auth.updateUser(
       {

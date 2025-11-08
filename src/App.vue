@@ -52,6 +52,8 @@
                   variables: I18nVariables
                 }"
                 :redirect-to="redirectTo"
+                :before-submit="handleEmailSubmit"
+                @on-submit="handleSubmit"
                 show-links
               />
             </div>
@@ -318,6 +320,18 @@ const isAnonymous = computed(() => supabaseUser.value?.is_anonymous)
 const handleSignOut = () => {
   supabaseClient.auth.signOut()
   supabaseUser.value = null
+}
+
+const handleEmailSubmit = async (email: string) => {
+  if (email.endsWith('@suspicious.com')) {
+    alert('This email provider is not allowed.')
+    return false
+  }
+  return true
+}
+
+const handleSubmit = (event: Event) => {
+  console.log(event)
 }
 
 watch(

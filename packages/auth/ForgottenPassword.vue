@@ -82,9 +82,11 @@ export interface ForgottenPasswordProps {
   redirectTo?: RedirectTo
   showLinks?: boolean
   i18n?: AuthI18nVariables
+  beforeSubmit?: (email: string) => Promise<boolean | void> | boolean | void
 }
 
 const props = withDefaults(defineProps<ForgottenPasswordProps>(), {})
+const emit = defineEmits(['on-submit'])
 
 const email = ref('')
 const error = ref('')
@@ -98,6 +100,13 @@ const labels = computed(
 )
 
 const handleSubmit = async (e: Event) => {
+  if (props.beforeSubmit) {
+    const canSubmit = await props.beforeSubmit(email.value)
+    if (canSubmit === false) {
+      return
+    }
+  }
+  emit('on-submit', email.value)
   // console.log(props)
   error.value = ''
   message.value = ''

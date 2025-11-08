@@ -28,6 +28,8 @@
         :showLinks="showLinks"
         :i18n="i18n"
         :additionalData="additionalData"
+        :before-submit="props.beforeSubmit"
+        @on-submit="handleSubmit"
       />
       <MagicLink
         v-if="authView === VIEWS.MAGIC_LINK"
@@ -36,6 +38,8 @@
         :redirectTo="redirectTo"
         :showLinks="showLinks"
         :i18n="i18n"
+        :before-submit="props.beforeSubmit"
+        @on-submit="handleSubmit"
       />
     </template>
   </SocialAuthContainer>
@@ -47,6 +51,8 @@
       :redirectTo="redirectTo"
       :showLinks="showLinks"
       :i18n="i18n"
+      :before-submit="props.beforeSubmit"
+      @on-submit="handleSubmit"
     />
     <UpdatePassword
       v-if="authView === VIEWS.UPDATE_PASSWORD"
@@ -101,12 +107,16 @@ const props = withDefaults(defineProps<AuthProps>(), {
   anonymouslyCredentials: undefined
 })
 
-const emit = defineEmits(['update:view'])
+const emit = defineEmits(['update:view', 'on-submit'])
 
 const authView = ref<AuthViewType>(props.view)
 const setAuthView = (newView: AuthViewType) => {
   emit('update:view', newView)
   authView.value = newView
+}
+
+const handleSubmit = (e: Event) => {
+  emit('on-submit', e)
 }
 
 provide(AuthViewKey, {

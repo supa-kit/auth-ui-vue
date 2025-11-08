@@ -116,7 +116,6 @@ import {
 } from '../types'
 import {
   Anchor,
-  Button,
   BrandButton,
   Container,
   Input,
@@ -135,9 +134,12 @@ export interface EmailAuthProps {
   showLinks?: boolean
   i18n?: AuthI18nVariables
   additionalData?: { [key: string]: any }
+  beforeSubmit?: (email: string) => Promise<boolean | void> | boolean | void
 }
 
 const props = withDefaults(defineProps<EmailAuthProps>(), {})
+
+const emit = defineEmits(['on-submit'])
 
 const email = ref('')
 const password = ref('')
@@ -151,12 +153,20 @@ const labels = computed(
   () => props.i18n?.[authView.value] as AuthI18nVariables['sign_in' | 'sign_up']
 )
 const handleSubmit = async (e: Event) => {
+  if (props.beforeSubmit) {
+    const canSubmit = await props.beforeSubmit(email.value)
+    if (canSubmit === false) {
+      return
+    }
+  }
+
   // console.log(props)
   error.value = ''
   message.value = ''
   isLoading.value = true
   switch (authView.value) {
     case 'sign_in':
+      emit('on-submit', email.value)
       const {
         // data: { user: signInUser, session: signInSession },
         error: signInError
@@ -176,6 +186,7 @@ const handleSubmit = async (e: Event) => {
       if (props.additionalData) {
         options.data = props.additionalData
       }
+      emit('on-submit', email.value)
       const {
         data: { user: signUpUser, session: signUpSession },
         error: signUpError
